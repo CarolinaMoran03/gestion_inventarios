@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Gestión de Inventario{% endblock %}</title>
+    <link href="{% static 'css/tailwind.css' %}" rel="stylesheet">
+    <link rel="icon" href="{% static 'icon/Icono.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Estilos adicionales para mejorar la apariencia */
+        .nav-link {
+            @apply text-blue-300 hover:text-white transition-colors duration-300;
+        }
+        .nav-icon {
+            @apply text-white mr-2;
+        }
+        .footer-text {
+            @apply text-gray-400 text-sm;
+        }
+        .chart-container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .total-section {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: 0.375rem; /* 6px */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            color: #fff; /* Texto en blanco para mejor contraste */
+        }
+        .total-title {
+            font-size: 1.125rem; /* 18px */
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .total-value {
+            font-size: 1.5rem; /* 24px */
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal flex flex-col min-h-screen">
+
+    <!-- Barra de Navegación -->
+    <nav class="bg-purple-500 p-4 shadow-md">
+        <div class="container mx-auto flex items-center justify-between flex-wrap">
+            <a href="{% url 'base' %}" class="text-white text-3xl font-bold">Gestión de Inventario</a>
+            <div class="block lg:flex lg:space-x-6">
+                <a href="{% url 'lista_productos' %}" class="text-white nav-link flex items-center mt-2 lg:mt-0">
+                    <i class="fa-solid fa-box-archive nav-icon"></i> Productos
+                </a>
+                <a href="{% url 'lista_proveedores' %}" class="text-white nav-link flex items-center mt-2 lg:mt-0">
+                    <i class="fa-solid fa-truck nav-icon"></i> Proveedores
+                </a>
+                <a href="{% url 'lista_pedidos' %}" class="text-white nav-link flex items-center mt-2 lg:mt-0">
+                    <i class="fa-solid fa-clipboard-list nav-icon"></i> Pedidos
+                </a>
+                <a href="{% url 'lista_movimientos' %}" class="text-white nav-link flex items-center mt-2 lg:mt-0">
+                    <i class="fa-solid fa-sync-alt nav-icon"></i> Movimientos
+                </a>
+            </div>
+            <div class="flex items-center space-x-4">
+                {% if user.is_authenticated %}
+                    <span class="text-white">Hola, {{ user.username }}</span>
+                    <form method="post" action="{% url 'logout' %}" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="text-white hover:text-gray-200">Salir</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 container mx-auto mt-8 px-4">
+        {% block content %}
+        <!-- Sección de Totales -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="total-section" style="background-color: rgba(54, 162, 235, 1);">
+                <div class="total-title">Total Productos</div>
+                <div class="total-value">{{ total_productos }}</div>
+            </div>
+            <div class="total-section" style="background-color: rgba(75, 192, 192, 1);">
+                <div class="total-title">Total Proveedores</div>
+                <div class="total-value">{{ total_proveedores }}</div>
+            </div>
+            <div class="total-section" style="background-color: rgba(255, 159, 64, 1);">
+                <div class="total-title">Total Pedidos</div>
+                <div class="total-value">{{ total_pedidos }}</div>
+            </div>
+            <div class="total-section" style="background-color: rgb(240, 231, 116);">
+                <div class="total-title">Total Movimientos</div>
+                <div class="total-value">{{ total_movimientos }}</div>
+            </div>
+        </div>
+
+        <!-- Sección de Gráficos -->
+        <div class="chart-container mt-8">
+            <h3 class="text-lg font-semibold mb-4">Gráfico de Pastel</h3>
+            <canvas id="pieChart"></canvas>
+        </div>
+        {% endblock %}
+    </main>
+
+    <!-- Sección de Información Adicional -->
+    <section class="container mx-auto mt-8 px-4 py-6 bg-white shadow-md rounded-lg">
+        <h2 class="text-xl font-bold mb-4">Información Adicional</h2>
+        <p>Aquí puedes incluir información adicional o secciones especiales.</p>
+    </section>
+
+    <!-- Sección de Contacto -->
+    <section class="container mx-auto mt-8 px-4 py-6 bg-gray-200 rounded-lg">
+        <h2 class="text-xl font-bold mb-4">Contacto</h2>
+        <p>Para más información, contáctanos a través de:</p>
+        <p>Email: amorans6@unemi.edu.ec</p>
+        <p>Teléfono: +593 939 833971</p>
+    </section>
+
+    <!-- Pie de Página -->
+    <footer class="bg-purple-800 p-4 mt-8">
+        <div class="container mx-auto text-center footer-text text-white">
+            &copy; 2024 CM. Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <!-- Script para los Gráficos -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctxPie = document.getElementById('pieChart').getContext('2d');
+
+            // Datos desde el contexto Django
+            const totalProductos = parseInt('{{ total_productos }}', 10);
+            const totalProveedores = parseInt('{{ total_proveedores }}', 10);
+            const totalPedidos = parseInt('{{ total_pedidos }}', 10);
+            const totalMovimientos = parseInt('{{ total_movimientos }}', 10);
+
+            // Colores de los gráficos
+            const colors = [
+                'rgba(54, 162, 235, 0.6)',  // Productos
+                'rgba(75, 192, 192, 0.6)',  // Proveedores
+                'rgba(255, 159, 64, 0.6)',  // Pedidos
+                'rgb(240, 231, 116)'  // Movimientos
+            ];
+            const borderColors = [
+                'rgba(54, 162, 235, 1)', 
+                'rgba(75, 192, 192, 1)', 
+                'rgba(255, 159, 64, 1)', 
+                'rgb(240, 231, 116)'
+            ];
+
+            // Gráfico de Pastel
+            new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: ['Productos', 'Proveedores', 'Pedidos', 'Movimientos'],
+                    datasets: [{
+                        label: 'Cantidad',
+                        data: [totalProductos, totalProveedores, totalPedidos, totalMovimientos],
+                        backgroundColor: colors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(2);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        },
+                        // Cambiar el color del segmento al pasar el mouse
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

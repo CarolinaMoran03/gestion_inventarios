@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white shadow-md rounded my-6 p-6">
+    <h1 class="text-2xl font-bold mb-4">Lista de Pedidos</h1>
+    
+    
+    <!-- Campo de búsqueda -->
+    <input type="text" id="search-input" name="q" value="{{ query }}" class="border p-2 mb-4 w-full" placeholder="Buscar pedidos...">
+
+    <!-- Agregar un botón para añadir un nuevo pedido -->
+    <a href="{% url 'crear_pedido' %}" class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block">Añadir Pedido</a>
+    
+    <div class="mb-4">
+        <a href="{% url 'export_pedidos_excel' %}" class="bg-green-600 text-white px-4 py-2 rounded mr-2">Exportar a Excel</a>
+        <a href="{% url 'export_pedidos_pdf' %}" class="bg-red-600 text-white px-4 py-2 rounded">Exportar a PDF</a>
+    </div>
+
+    <table class="min-w-full bg-white border border-gray-200">
+        <thead>
+            <tr class="bg-gray-100">
+                <th class="px-4 py-2 border-b">Código</th>
+                <th class="px-4 py-2 border-b">Fecha de Pedido</th>
+                <th class="px-4 py-2 border-b">Proveedor</th>
+                <th class="px-4 py-2 border-b">Estado</th>
+                <th class="px-4 py-2 border-b">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="order-list">
+            {% for pedido in pedidos %}
+            <tr class="bg-white border-b">
+                <td class="px-4 py-2">{{ pedido.codigo }}</td>
+                <td class="px-4 py-2">{{ pedido.fecha_pedido }}</td>
+                <td class="px-4 py-2">{{ pedido.proveedor.nombre }}</td>
+                <td class="px-4 py-2">{{ pedido.estado }}</td>
+                <td class="px-4 py-2">
+                    <a href="{% url 'detalle_pedido' pedido.id %}" class="bg-green-500 text-white px-2 py-1 rounded">Ver</a>
+                    <a href="{% url 'editar_pedido' pedido.id %}" class="bg-yellow-500 text-white px-2 py-1 rounded">Editar</a>
+                    <a href="{% url 'eliminar_pedido' pedido.id %}" class="bg-red-500 text-white px-2 py-1 rounded">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="px-6 py-4 text-center text-gray-500">No hay pedidos registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.getElementById('search-input').addEventListener('input', function() {
+    const query = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#order-list tr');
+
+    rows.forEach(row => {
+        const codigo = row.children[0].textContent.toLowerCase();
+        const fecha = row.children[1].textContent.toLowerCase();
+        const proveedor = row.children[2].textContent.toLowerCase();
+        const estado = row.children[3].textContent.toLowerCase();
+
+        if (codigo.includes(query) || fecha.includes(query) || proveedor.includes(query) || estado.includes(query)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+</script>
+
+{% endblock %}

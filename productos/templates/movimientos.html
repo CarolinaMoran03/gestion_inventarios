@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white shadow-md rounded my-6 p-6">
+    <h1 class="text-2xl font-bold mb-4">Lista de Movimientos</h1>
+    
+    <!-- Campo de búsqueda -->
+    <input type="text" id="search-input" name="q" value="{{ query }}" class="border p-2 mb-4 w-full" placeholder="Buscar movimientos...">
+
+    <!-- Agregar un botón para añadir un nuevo movimiento -->
+    <a href="{% url 'crear_movimiento' %}" class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block">Añadir Movimiento</a>
+
+    <!-- Botones de exportación -->
+    <div class="mb-4">
+        <a href="{% url 'export_excel_movimientos' %}" class="bg-green-600 text-white px-4 py-2 rounded inline-block">Exportar a Excel</a>
+        <a href="{% url 'export_pdf_movimientos' %}" class="bg-red-600 text-white px-4 py-2 rounded mr-2 inline-block">Exportar a PDF</a>
+        
+    </div>
+
+    <!-- Tabla de movimientos -->
+    <table class="min-w-full bg-white border border-gray-200">
+        <thead>
+            <tr class="bg-gray-100">
+                <th class="px-4 py-2 border-b">Código</th>
+                <th class="px-4 py-2 border-b">Producto</th>
+                <th class="px-4 py-2 border-b">Tipo Movimiento</th>
+                <th class="px-4 py-2 border-b">Cantidad</th>
+                <th class="px-4 py-2 border-b">Fecha Movimiento</th>
+                <th class="px-4 py-2 border-b">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="movement-list">
+            {% for movimiento in movimientos %}
+            <tr class="bg-white border-b">
+                <td class="px-4 py-2">{{ movimiento.codigo }}</td>
+                <td class="px-4 py-2">{{ movimiento.producto.nombre }}</td>
+                <td class="px-4 py-2">{{ movimiento.tipo_movimiento }}</td>
+                <td class="px-4 py-2">{{ movimiento.cantidad }}</td>
+                <td class="px-4 py-2">{{ movimiento.fecha_movimiento|date:"d/m/Y H:i" }}</td>
+                <td class="px-4 py-2">
+                    <a href="{% url 'detalle_movimiento' movimiento.id %}" class="bg-green-500 text-white px-2 py-1 rounded">Ver</a>
+                    <a href="{% url 'editar_movimiento' movimiento.id %}" class="bg-yellow-500 text-white px-2 py-1 rounded">Editar</a>
+                    <a href="{% url 'eliminar_movimiento' movimiento.id %}" class="bg-red-500 text-white px-2 py-1 rounded">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="px-6 py-4 text-center text-gray-500">No hay movimientos registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.getElementById('search-input').addEventListener('input', function() {
+    const query = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#movement-list tr');
+
+    rows.forEach(row => {
+        const codigo = row.children[0].textContent.toLowerCase();
+        const producto = row.children[1].textContent.toLowerCase();
+        const tipoMovimiento = row.children[2].textContent.toLowerCase();
+        const cantidad = row.children[3].textContent.toLowerCase();
+        const fecha = row.children[4].textContent.toLowerCase();
+
+        if (codigo.includes(query) || producto.includes(query) || tipoMovimiento.includes(query) || cantidad.includes(query) || fecha.includes(query)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+</script>
+
+{% endblock %}

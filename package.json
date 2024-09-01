@@ -1,0 +1,11 @@
+{
+  "name": "gestion-inventarios",
+  "version": "1.0.0",
+  "description": "Aplicación de Gestión de Inventarios",
+  "scripts": {
+    "build-css": "tailwindcss -i ./static/css/tailwind.css -o ./static/css/output.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.10"
+  }
+}

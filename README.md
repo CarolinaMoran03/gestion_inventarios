@@ -1,2 +1,0 @@
-# gestion_inventarios
- 

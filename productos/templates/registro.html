@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Gestión de Inventario</title>
+    <link rel="icon" href="{% static 'icon/Icono.ico' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="login-page">
+        <div class="image-section"></div>
+        <div class="login-container">
+            <div class="login-form">
+                <h2><i class="fa-solid fa-box"></i> Crear una cuenta</h2>
+                <form method="POST" action="{% url 'registro' %}">
+                    {% csrf_token %}
+                    <div class="form-group input-group">
+                        <label for="username">
+                            <i class="fa-solid fa-user"></i>
+                             Usuario:
+                        </label>
+                        <input type="text" id="username" name="username" required placeholder="Juan Pérez">
+                    </div>
+                    <div class="form-group input-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i>
+                             Correo Electrónico:
+                        </label>
+                        <input type="email" id="email" name="email" required placeholder="tu@ejemplo.com">
+                    </div>
+                    <div class="form-group input-group">
+                        <label for="password">
+                            <i class="fas fa-eye eye-icon" id="togglePassword" onclick="togglePasswordVisibility('password')"></i>
+                             Contraseña:
+                        </label>
+                        <input type="password" id="password" name="password" required placeholder="Contraseña">
+                    </div>
+                    <div class="form-group input-group">
+                        <label for="password_confirm">
+                            <i class="fas fa-eye eye-icon" id="toggleConfirmPassword" onclick="togglePasswordVisibility('password_confirm')"></i>
+                            Confirmar Contraseña:
+                        </label>
+                        <input type="password" id="password_confirm" name="password_confirm" required placeholder="Confirmar Contraseña">
+                    </div>
+                    <button type="submit" class="login-button">
+                        <div class="icon-box">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        Registrarse
+                    </button>                    
+                    <div class="register-link">
+                        <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility(id) {
+            const passwordInput = document.getElementById(id);
+            const eyeIcon = (id === 'password') ? document.getElementById('togglePassword') : document.getElementById('toggleConfirmPassword');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

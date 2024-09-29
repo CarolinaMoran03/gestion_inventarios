@@ -40,12 +40,58 @@
             font-size: 1.5rem; /* 24px */
             font-weight: 700;
         }
+        /* Estilos para el menú de perfil */
+        .profile-icon {
+            width: 40px; /* Tamaño del icono */
+            height: 40px;
+            border-radius: 50%; /* Circular */
+            background-color: #4A5568; /* Color de fondo del perfil */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative; /* Necesario para el dropdown */
+        }
+        .dropdown {
+            display: none; /* Ocultar por defecto */
+            position: absolute; /* Posicionamiento absoluto */
+            background-color: white; /* Fondo del menú */
+            border-radius: 0.375rem; /* Bordes redondeados */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 10px;
+            right: 0; /* Alinear a la derecha */
+            z-index: 10; /* Asegurarse que esté encima */
+            opacity: 0; /* Opacidad inicial */
+            transition: opacity 0.3s ease, transform 0.3s ease; /* Transiciones suaves */
+            transform: translateY(-10px); /* Desplazamiento inicial */
+        }
+        .dropdown.show {
+            display: block; /* Mostrar al activar la clase */
+            opacity: 1; /* Opacidad completa */
+            transform: translateY(0); /* Desplazamiento normal */
+        }
+        .dropdown-item-wrapper {
+            padding: 10px; /* Espaciado del ítem */
+        }
+        .dropdown-item {
+            text-decoration: none;
+            color: #4A5568; /* Color del texto */
+            display: block; /* Mostrar como bloque */
+        }
+        .dropdown-item:hover {
+            background-color: #E2E8F0; /* Color de fondo al pasar el mouse */
+        }
+        .dropdown-divider {
+            height: 1px;
+            background-color: #E2E8F0;
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal flex flex-col min-h-screen">
 
     <!-- Barra de Navegación -->
-    <nav class="bg-purple-500 p-4 shadow-md">
+    <nav class="bg-purple-500 p-4 shadow-md relative">
         <div class="container mx-auto flex items-center justify-between flex-wrap">
             <a href="{% url 'base' %}" class="text-white text-3xl font-bold">Gestión de Inventario</a>
             <div class="block lg:flex lg:space-x-6">
@@ -62,13 +108,25 @@
                     <i class="fa-solid fa-sync-alt nav-icon"></i> Movimientos
                 </a>
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-6 relative">
                 {% if user.is_authenticated %}
-                    <span class="text-white">Hola, {{ user.username }}</span>
-                    <form method="post" action="{% url 'logout' %}" class="inline">
-                        {% csrf_token %}
-                        <button type="submit" class="text-white hover:text-gray-200">Salir</button>
-                    </form>
+                    <div class="profile-icon" onclick="toggleDropdown()">
+                        <i class="fa-solid fa-user text-white"></i>
+                    </div>
+                    <div id="profileDropdown" class="dropdown">
+                        <div class="dropdown-item-wrapper">
+                            <div class="dropdown-user">
+                                <div class="dropdown-user-mail text-truncate">{{ user.email }}</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item-wrapper">
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item">Cerrar Sesión</button>
+                            </form>
+                        </div>
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -96,11 +154,11 @@
                 <div class="total-value">{{ total_movimientos }}</div>
             </div>
         </div>
-
+        <br>
         <!-- Sección de Gráficos -->
         <div class="chart-container mt-8">
-            <h3 class="text-lg font-semibold mb-4">Gráfico de Pastel</h3>
-            <canvas id="pieChart"></canvas>
+            <h3 class="text-lg font-semibold mb-4"></h3>
+            <canvas id="histogramChart"></canvas>
         </div>
         {% endblock %}
     </main>
@@ -126,71 +184,51 @@
         </div>
     </footer>
 
-    <!-- Script para los Gráficos -->
     <script>
+        // Código para la gráfica de barras
         document.addEventListener('DOMContentLoaded', function() {
-            const ctxPie = document.getElementById('pieChart').getContext('2d');
-
-            // Datos desde el contexto Django
+            const ctxHistogram = document.getElementById('histogramChart').getContext('2d');
             const totalProductos = parseInt('{{ total_productos }}', 10);
             const totalProveedores = parseInt('{{ total_proveedores }}', 10);
             const totalPedidos = parseInt('{{ total_pedidos }}', 10);
             const totalMovimientos = parseInt('{{ total_movimientos }}', 10);
 
-            // Colores de los gráficos
-            const colors = [
-                'rgba(54, 162, 235, 0.6)',  // Productos
-                'rgba(75, 192, 192, 0.6)',  // Proveedores
-                'rgba(255, 159, 64, 0.6)',  // Pedidos
-                'rgb(240, 231, 116)'  // Movimientos
-            ];
-            const borderColors = [
-                'rgba(54, 162, 235, 1)', 
-                'rgba(75, 192, 192, 1)', 
-                'rgba(255, 159, 64, 1)', 
-                'rgb(240, 231, 116)'
-            ];
+            const colors = ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 159, 64, 1)', 'rgba(240, 231, 116, 1)'];
 
-            // Gráfico de Pastel
-            new Chart(ctxPie, {
-                type: 'pie',
+            const histogramChart = new Chart(ctxHistogram, {
+                type: 'bar',
                 data: {
-                    labels: ['Productos', 'Proveedores', 'Pedidos', 'Movimientos'],
+                    labels: ['Total Productos', 'Total Proveedores', 'Total Pedidos', 'Total Movimientos'],
                     datasets: [{
                         label: 'Cantidad',
                         data: [totalProductos, totalProveedores, totalPedidos, totalMovimientos],
                         backgroundColor: colors,
-                        borderColor: borderColors,
                         borderWidth: 1
                     }]
                 },
                 options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.raw;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(2);
-                                    return `${label}: ${value} (${percentage}%)`;
-                                }
-                            }
-                        },
-                        // Cambiar el color del segmento al pasar el mouse
-                        hover: {
-                            mode: 'nearest',
-                            intersect: true
+                    scales: {
+                        y: {
+                            beginAtZero: true
                         }
                     }
                 }
             });
         });
-    </script>
 
+        // Función para mostrar/ocultar el menú de perfil
+        function toggleDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('show'); // Usar clase para mostrar/ocultar
+        }
+
+        // Cerrar el menú al hacer clic fuera de él
+        window.onclick = function(event) {
+            if (!event.target.matches('.profile-icon')) {
+                const dropdown = document.getElementById('profileDropdown');
+                dropdown.classList.remove('show'); // Remover clase para ocultar
+            }
+        }
+    </script>
 </body>
 </html>

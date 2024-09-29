@@ -3,14 +3,13 @@
 {% block content %}
 <div class="bg-white shadow-md rounded my-6 p-6">
     <h1 class="text-2xl font-bold mb-4">Lista de Pedidos</h1>
-    
-    
+
     <!-- Campo de búsqueda -->
     <input type="text" id="search-input" name="q" value="{{ query }}" class="border p-2 mb-4 w-full" placeholder="Buscar pedidos...">
 
     <!-- Agregar un botón para añadir un nuevo pedido -->
     <a href="{% url 'crear_pedido' %}" class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block">Añadir Pedido</a>
-    
+
     <div class="mb-4">
         <a href="{% url 'export_pedidos_excel' %}" class="bg-green-600 text-white px-4 py-2 rounded mr-2">Exportar a Excel</a>
         <a href="{% url 'export_pedidos_pdf' %}" class="bg-red-600 text-white px-4 py-2 rounded">Exportar a PDF</a>
@@ -32,7 +31,24 @@
                 <td class="px-4 py-2">{{ pedido.codigo }}</td>
                 <td class="px-4 py-2">{{ pedido.fecha_pedido }}</td>
                 <td class="px-4 py-2">{{ pedido.proveedor.nombre }}</td>
-                <td class="px-4 py-2">{{ pedido.estado }}</td>
+                <td class="px-4 py-2">
+                    <span class="
+                        inline-flex items-center font-medium text-xs
+                        {% if pedido.estado == 'Completado' %}
+                            bg-green-100 text-green-800 rounded-full py-0.5 px-2.5
+                        {% elif pedido.estado == 'En Proceso' %}
+                            bg-purple-100 text-purple-800 rounded-full py-0.5 px-2.5
+                        {% elif pedido.estado == 'Pendiente' %}
+                            bg-yellow-100 text-yellow-800 rounded-full py-0.5 px-2.5
+                        {% elif pedido.estado == 'Cancelado' %}
+                            bg-red-100 text-red-800 rounded-full py-0.5 px-2.5
+                        {% else %}
+                            bg-gray-100 text-gray-800 rounded-full py-0.5 px-2.5
+                        {% endif %}
+                    ">
+                        {{ pedido.estado }}
+                    </span>
+                </td>
                 <td class="px-4 py-2">
                     <a href="{% url 'detalle_pedido' pedido.id %}" class="bg-green-500 text-white px-2 py-1 rounded">Ver</a>
                     <a href="{% url 'editar_pedido' pedido.id %}" class="bg-yellow-500 text-white px-2 py-1 rounded">Editar</a>

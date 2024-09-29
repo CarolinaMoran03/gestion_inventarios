@@ -1,20 +1,19 @@
 from django.urls import path
 from . import views
-from .views import login_view, logout_view, export_pdf, export_excel,export_pedidos_pdf, export_pedidos_excel, export_proveedores_pdf, export_proveedores_excel
+from .views import login_view, logout_view, export_pdf, export_excel, export_pedidos_pdf, export_pedidos_excel, export_proveedores_pdf, export_proveedores_excel
 
 urlpatterns = [
-
     path('', login_view, name='login'),  # Página de inicio de sesión como principal
 
     # URL para logout
     path('logout/', logout_view, name='logout'),
     path('base/', views.base, name='base'),
+    path('login_redirect/', views.login_redirect_view, name='login_redirect'), 
 
     # Rutas para exportar datos
-    #productos
+    # productos
     path('export_pdf/', export_pdf, name='export_pdf'),
     path('export_excel/', export_excel, name='export_excel'),
-
     path('export_pedidos_pdf/', export_pedidos_pdf, name='export_pedidos_pdf'),
     path('export_pedidos_excel/', export_pedidos_excel, name='export_pedidos_excel'),
     path('export_proveedores_pdf/', export_proveedores_pdf, name='export_proveedores_pdf'),
@@ -22,7 +21,7 @@ urlpatterns = [
     path('export_pdf_movimientos/', views.export_pdf_movimientos, name='export_pdf_movimientos'),
     path('export_excel_movimientos/', views.export_excel_movimientos, name='export_excel_movimientos'),
 
- # Página principal (podría mostrar un dashboard)
+    # Página principal (podría mostrar un dashboard)
     path('productos/', views.lista_productos, name='lista_productos'),
     path('productos/crear/', views.crear_producto, name='crear_producto'),
     path('productos/<int:producto_id>/', views.detalle_producto, name='detalle_producto'),
@@ -49,4 +48,7 @@ urlpatterns = [
     path('movimientos/nuevo/', views.crear_movimiento, name='crear_movimiento'),
     path('movimientos/<int:movimiento_id>/editar/', views.editar_movimiento, name='editar_movimiento'),
     path('movimientos/<int:movimiento_id>/eliminar/', views.eliminar_movimiento, name='eliminar_movimiento'),
+
+    # Registro de usuarios
+    path('registro/', views.registro, name='registro'), 
 ]

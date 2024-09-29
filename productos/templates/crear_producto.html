@@ -7,26 +7,37 @@
     <h1 class="text-2xl font-bold mb-6">Agregar Nuevo Producto</h1>
     <form method="POST">
         {% csrf_token %}
+        
         <div class="mb-4">
             <label for="nombre" class="block text-gray-700">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" class="w-full border rounded px-3 py-2" value="{{ form.nombre.value }}" required>
+            {{ form.nombre }}  <!-- Este campo se precargará -->
         </div>
+
         <div class="mb-4">
             <label for="descripcion" class="block text-gray-700">Descripción:</label>
-            <textarea id="descripcion" name="descripcion" class="w-full border rounded px-3 py-2" required>{{ form.descripcion.value }}</textarea>
+            {{ form.descripcion }}  <!-- Este campo se precargará -->
         </div>
+
         <div class="mb-4">
             <label for="precio" class="block text-gray-700">Precio:</label>
-            <input type="number" id="precio" name="precio" step="0.01" class="w-full border rounded px-3 py-2" value="{{ form.precio.value }}" required>
+            {{ form.precio }}  <!-- Este campo se precargará -->
         </div>
+
         <div class="mb-4">
             <label for="stock_actual" class="block text-gray-700">Stock Actual:</label>
-            <input type="number" id="stock_actual" name="stock_actual" class="w-full border rounded px-3 py-2" value="{{ form.stock_actual.value }}" required>
+            {{ form.stock_actual }}  <!-- Este campo se precargará -->
         </div>
+
         <div class="mb-4">
             <label for="ubicacion" class="block text-gray-700">Ubicación en Almacén:</label>
-            <input type="text" id="ubicacion" name="ubicacion" class="w-full border rounded px-3 py-2" value="{{ form.ubicacion.value }}">
+            {{ form.ubicacion }}  <!-- Este campo se precargará -->
         </div>
+
+        <div class="mb-4">
+            <label for="categoria" class="block text-gray-700">Categoría:</label>
+            {{ form.categoria }}  <!-- Este campo se precargará -->
+        </div>
+
         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Guardar</button>
         <a href="{% url 'lista_productos' %}" class="bg-gray-500 text-white px-4 py-2 rounded ml-4">Cancelar</a>
     </form>

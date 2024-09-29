@@ -15,6 +15,32 @@ body {
     height: 100vh;
 }
 
+.login-button {
+    display: flex;
+    align-items: center; /* Centrar verticalmente el icono y el texto */
+    justify-content: center;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #3498db;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 10px; /* Ajusta el tamaño según sea necesario */
+    height: 10px;
+    margin-right: 20px; /* Espacio entre el icono y el texto */
+    color: white; /* Color del icono */
+}
+
+
 .image-section {
     flex: 1;
     background: url('/static/img/login.jpg') no-repeat center center;
@@ -42,7 +68,7 @@ body {
 
 .login-form {
     background: #fff;
-    padding: 2rem;
+    padding: 4rem;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
@@ -70,15 +96,23 @@ body {
     margin-bottom: 1rem;
 }
 
+.input-group label {
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem; /* Aumentar tamaño de fuente de las etiquetas */
+    margin-bottom: 0.5rem;
+}
+
 .input-group input {
-    padding-right: 40px; /* Espacio para el icono */
+    font-size: 1rem; /* Aumentar tamaño de fuente de los inputs */
+    padding: 10px 10px 10px 40px; /* Espaciado interno */
+    width: 100%; /* Asegurar que el campo ocupe el 100% del ancho */
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .eye-icon {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
+    margin-right: 10px; /* Espacio entre icono y texto */
     cursor: pointer;
 }
 
@@ -86,8 +120,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px; /* Ajusta el tamaño según sea necesario */
-    height: 40px;
+    width: 10px; /* Ajusta el tamaño según sea necesario */
+    height: 20px;
     background-color: #3498db; /* Color de fondo */
     color: white; /* Color del icono */
     border-radius: 5px;
@@ -98,12 +132,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.75rem;
+    padding: 1rem;
     border: none;
     border-radius: 4px;
     background-color: #3498db;
     color: #fff;
-    font-size: 1rem;
+    font-size: 1.6rem; /* Aumentar tamaño de fuente del botón */
     cursor: pointer;
     transition: background-color 0.3s ease;
     width: 100%;
@@ -113,7 +147,7 @@ body {
     background-color: #2980b9;
 }
 
-.forgot-password {
+.register-link {
     text-align: center;
     margin-top: 1rem;
 }

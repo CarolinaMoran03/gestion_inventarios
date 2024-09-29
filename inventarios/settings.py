@@ -50,17 +50,23 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',  # Asegúrate de que esto esté presente
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+CSRF_COOKIE_SECURE = False  # Esto debería ser True en producción con HTTPS
+CSRF_COOKIE_HTTPONLY = False  # Esto permite que el token CSRF sea accesible en JavaScript
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-LOGIN_REDIRECT_URL = 'base'  # Redirige a la página base después del inicio de sesión
+#
 LOGOUT_REDIRECT_URL = 'login'
 ROOT_URLCONF = 'inventarios.urls'
+LOGIN_URL = '/login/'
 
 TEMPLATES = [
     {
@@ -77,6 +83,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'inventarios.wsgi.application'
 

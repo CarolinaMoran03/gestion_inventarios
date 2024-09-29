@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import F
+
 class Proveedor(models.Model):
     codigo = models.CharField(max_length=10, unique=True, editable=False)  # No editable
     nombre = models.CharField(max_length=100)
@@ -25,7 +26,29 @@ class Producto(models.Model):
     descripcion = models.TextField()
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     stock_actual = models.PositiveIntegerField()
-    ubicacion = models.CharField(max_length=100, blank=True, null=True)
+
+    # Cambiado para que la ubicacion sea un campo de elección
+    UBICACION_CHOICES = [
+        ('Milagro', 'Milagro'),
+        ('Guayaquil', 'Guayaquil'),
+        ('Duran', 'Durán')
+    ]
+
+    ubicacion = models.CharField(max_length=10, choices=UBICACION_CHOICES, blank=True, null=True)
+
+    # Permitir nulos para facilitar la migración
+    categoria = models.CharField(
+        max_length=50,
+        choices=[
+            ('Electrónica', 'Electrónica'),
+            ('Alimentos', 'Alimentos y Bebidas'),
+            ('Salud', 'Salud y Belleza'),
+            ('Deportes', 'Deportes'),
+            ('Juguetes', 'Juguetes')
+        ],
+        blank=True,  # Permitir vacío
+        null=True  # Permitir nulos
+    )
 
     def save(self, *args, **kwargs):
         if not self.codigo:  # Genera el código solo si no está presente
@@ -54,7 +77,12 @@ class Pedido(models.Model):
     fecha_pedido = models.DateField()
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
     productos = models.ManyToManyField(Producto)
-    estado = models.CharField(max_length=50, choices=[('pendiente', 'Pendiente'), ('completado', 'Completado')])
+    estado = models.CharField(max_length=50, choices=[
+        ('Pendiente', 'Pendiente'), 
+        ('Completado', 'Completado'),
+        ('Cancelado', 'Cancelado'),
+        ('En Proceso', 'En Proceso')
+    ])
 
     def save(self, *args, **kwargs):
         if not self.codigo:  # Genera el código solo si no está presente
@@ -73,7 +101,10 @@ class Pedido(models.Model):
 class MovimientoInventario(models.Model):
     codigo = models.CharField(max_length=100, unique=True, blank=True, editable=False)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    tipo_movimiento = models.CharField(max_length=50, choices=[('entrada', 'Entrada'), ('salida', 'Salida')])
+    tipo_movimiento = models.CharField(max_length=50, choices=[
+        ('entrada', 'Entrada'), 
+        ('salida', 'Salida')
+    ])
     cantidad = models.IntegerField()
     fecha_movimiento = models.DateTimeField(auto_now_add=True)
     lote = models.CharField(max_length=100, blank=True, null=True)

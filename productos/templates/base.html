@@ -8,7 +8,6 @@
     <link href="{% static 'css/tailwind.css' %}" rel="stylesheet">
     <link rel="icon" href="{% static 'icon/Icono.ico' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Estilos adicionales para mejorar la apariencia */
         .nav-link {
@@ -18,11 +17,7 @@
             @apply text-white mr-2;
         }
         .footer-text {
-            @apply text-gray-400 text-sm;
-        }
-        .chart-container {
-            max-width: 600px;
-            margin: auto;
+            @apply text-white text-sm; /* Cambiado a texto blanco */
         }
         .total-section {
             background-color: #f9f9f9;
@@ -30,15 +25,6 @@
             border-radius: 0.375rem; /* 6px */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             color: #fff; /* Texto en blanco para mejor contraste */
-        }
-        .total-title {
-            font-size: 1.125rem; /* 18px */
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        .total-value {
-            font-size: 1.5rem; /* 24px */
-            font-weight: 700;
         }
         /* Estilos para el menú de perfil */
         .profile-icon {
@@ -93,7 +79,10 @@
     <!-- Barra de Navegación -->
     <nav class="bg-purple-500 p-4 shadow-md relative">
         <div class="container mx-auto flex items-center justify-between flex-wrap">
-            <a href="{% url 'base' %}" class="text-white text-3xl font-bold">Gestión de Inventario</a>
+            <a href="{% url 'base' %}" class="text-white text-3xl font-bold flex items-center">
+                <i class="fa-solid fa-box-open nav-icon"></i> <!-- Icono añadido aquí -->
+                Gestión de Inventario
+            </a>
             <div class="block lg:flex lg:space-x-6">
                 <a href="{% url 'lista_productos' %}" class="text-white nav-link flex items-center mt-2 lg:mt-0">
                     <i class="fa-solid fa-box-archive nav-icon"></i> Productos
@@ -135,98 +124,98 @@
     <!-- Contenido Principal -->
     <main class="flex-1 container mx-auto mt-8 px-4">
         {% block content %}
-        <!-- Sección de Totales -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="total-section" style="background-color: rgba(54, 162, 235, 1);">
-                <div class="total-title">Total Productos</div>
-                <div class="total-value">{{ total_productos }}</div>
+        <section class="container mx-auto mt-8 px-4 py-6 bg-white shadow-md rounded-lg">
+            <h2 class="text-xl font-bold mb-4">Información De Inventario</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="bg-blue-100 border border-blue-300 rounded-lg p-4 flex items-center">
+                    <i class="fa-solid fa-box-open text-blue-600 text-2xl mr-4"></i>
+                    <div>
+                        <h3 class="text-lg font-semibold">Total de Productos</h3>
+                        <p class="text-xl font-bold">{{ total_productos }}</p>
+                    </div>
+                </div>
+                
+                <div class="bg-yellow-100 border border-yellow-300 rounded-lg p-4 flex items-center">
+                    <i class="fa-solid fa-exclamation-triangle text-yellow-600 text-2xl mr-4"></i>
+                    <div>
+                        <h3 class="text-lg font-semibold">Productos con Bajo Stock</h3>
+                        <p class="text-xl font-bold">{{ productos_bajo_stock }}</p>
+                    </div>
+                </div>
+    
+                <div class="bg-green-100 border border-green-300 rounded-lg p-4 flex items-center">
+                    <i class="fa-solid fa-user-friends text-green-600 text-2xl mr-4"></i>
+                    <div>
+                        <h3 class="text-lg font-semibold">Total de Proveedores</h3>
+                        <p class="text-xl font-bold">{{ total_proveedores }}</p>
+                    </div>
+                </div>
+    
+                <div class="bg-purple-100 border border-purple-300 rounded-lg p-4 flex items-center">
+                    <i class="fa-solid fa-file-alt text-purple-600 text-2xl mr-4"></i>
+                    <div>
+                        <h3 class="text-lg font-semibold">Total de Pedidos</h3>
+                        <p class="text-xl font-bold">{{ total_pedidos }}</p>
+                    </div>
+                </div>
+    
+                <div class="bg-purple-100 border border-purple-300 rounded-lg p-4 flex items-center">
+                    <i class="fa-solid fa-clock text-orange-600 text-2xl mr-4"></i>
+                    <div>
+                        <h3 class="text-lg font-semibold">Pedidos Pendientes</h3>
+                        <p class="text-xl font-bold">{{ pedidos_pendientes }}</p>
+                    </div>
+                </div>
+    
+                <div class="bg-green-100 border border-green-300 rounded-lg p-4 flex items-center">
+                    <i class="fa-solid fa-check text-teal-600 text-2xl mr-4"></i>
+                    <div>
+                        <h3 class="text-lg font-semibold">Pedidos Completados</h3>
+                        <p class="text-xl font-bold">{{ pedidos_completados }}</p>
+                    </div>
+                </div>
+    
+                <div class="bg-yellow-100 border border-yellow-300 rounded-lg p-4 flex items-center">
+                    <i class="fa-solid fa-arrow-alt-circle-in text-red-600 text-2xl mr-4"></i>
+                    <div>
+                        <h3 class="text-lg font-semibold">Movimientos de Entrada</h3>
+                        <p class="text-xl font-bold">{{ movimientos_entrada }}</p>
+                    </div>
+                </div>
+
+                <div class="bg-pink-100 border border-pink-300 rounded-lg p-4 flex items-center">
+                    <i class="fa-solid fa-arrow-alt-circle-out text-red-600 text-2xl mr-4"></i>
+                    <div>
+                        <h3 class="text-lg font-semibold">Movimientos de Salida</h3>
+                        <p class="text-xl font-bold">{{ movimientos_salida }}</p>
+                    </div>
+                </div>
+
             </div>
-            <div class="total-section" style="background-color: rgba(75, 192, 192, 1);">
-                <div class="total-title">Total Proveedores</div>
-                <div class="total-value">{{ total_proveedores }}</div>
-            </div>
-            <div class="total-section" style="background-color: rgba(255, 159, 64, 1);">
-                <div class="total-title">Total Pedidos</div>
-                <div class="total-value">{{ total_pedidos }}</div>
-            </div>
-            <div class="total-section" style="background-color: rgb(240, 231, 116);">
-                <div class="total-title">Total Movimientos</div>
-                <div class="total-value">{{ total_movimientos }}</div>
-            </div>
-        </div>
-        <br>
-        <!-- Sección de Gráficos -->
-        <div class="chart-container mt-8">
-            <h3 class="text-lg font-semibold mb-4"></h3>
-            <canvas id="histogramChart"></canvas>
-        </div>
+        </section>
         {% endblock %}
     </main>
 
-    <!-- Sección de Información Adicional -->
-    <section class="container mx-auto mt-8 px-4 py-6 bg-white shadow-md rounded-lg">
-        <h2 class="text-xl font-bold mb-4">Información Adicional</h2>
-        <p>Aquí puedes incluir información adicional o secciones especiales.</p>
-    </section>
-
-    <!-- Sección de Contacto -->
-    <section class="container mx-auto mt-8 px-4 py-6 bg-gray-200 rounded-lg">
-        <h2 class="text-xl font-bold mb-4">Contacto</h2>
-        <p>Para más información, contáctanos a través de:</p>
-        <p>Email: amorans6@unemi.edu.ec</p>
-        <p>Teléfono: +593 939 833971</p>
-    </section>
-
     <!-- Pie de Página -->
-    <footer class="bg-purple-800 p-4 mt-8">
-        <div class="container mx-auto text-center footer-text text-white">
-            &copy; 2024 CM. Todos los derechos reservados.
-        </div>
+    <footer class="bg-purple-500 text-white text-center p-4">
+        <p class="footer-text">Sistema de Gestión de Inventario © 2024</p>
     </footer>
 
     <script>
-        // Código para la gráfica de barras
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctxHistogram = document.getElementById('histogramChart').getContext('2d');
-            const totalProductos = parseInt('{{ total_productos }}', 10);
-            const totalProveedores = parseInt('{{ total_proveedores }}', 10);
-            const totalPedidos = parseInt('{{ total_pedidos }}', 10);
-            const totalMovimientos = parseInt('{{ total_movimientos }}', 10);
-
-            const colors = ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 159, 64, 1)', 'rgba(240, 231, 116, 1)'];
-
-            const histogramChart = new Chart(ctxHistogram, {
-                type: 'bar',
-                data: {
-                    labels: ['Total Productos', 'Total Proveedores', 'Total Pedidos', 'Total Movimientos'],
-                    datasets: [{
-                        label: 'Cantidad',
-                        data: [totalProductos, totalProveedores, totalPedidos, totalMovimientos],
-                        backgroundColor: colors,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        });
-
-        // Función para mostrar/ocultar el menú de perfil
         function toggleDropdown() {
-            const dropdown = document.getElementById('profileDropdown');
-            dropdown.classList.toggle('show'); // Usar clase para mostrar/ocultar
+            var dropdown = document.getElementById("profileDropdown");
+            dropdown.classList.toggle("show");
         }
-
-        // Cerrar el menú al hacer clic fuera de él
+        // Cerrar el dropdown si se hace clic fuera de él
         window.onclick = function(event) {
             if (!event.target.matches('.profile-icon')) {
-                const dropdown = document.getElementById('profileDropdown');
-                dropdown.classList.remove('show'); // Remover clase para ocultar
+                var dropdowns = document.getElementsByClassName("dropdown");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
             }
         }
     </script>

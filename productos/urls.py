@@ -9,9 +9,7 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('base/', views.base, name='base'),
     path('login_redirect/', views.login_redirect_view, name='login_redirect'), 
-    path('pedidos/', login_redirect_view, name='lista_pedidos'),
-    path('proveedores/', login_redirect_view, name='lista_proveedores'),
-    path('movimientos/', login_redirect_view, name='lista_movimientos'),
+
 
     # Rutas para exportar datos
     # productos

@@ -10,17 +10,37 @@ from django.shortcuts import render
 def base(request):
     print("Acceso a base: usuario autenticado") 
     total_productos = Producto.objects.count()
+    productos_bajo_stock = Producto.objects.filter(stock_actual__lt=10).count()  
     total_proveedores = Proveedor.objects.count()
-    total_pedidos = Pedido.objects.count()
-    total_movimientos = MovimientoInventario.objects.count()
 
-    # Pasa los datos a la plantilla
+    # Contar pedidos en diferentes estados
+    total_pedidos = Pedido.objects.count()
+    pedidos_pendientes = Pedido.objects.filter(estado='Pendiente').count()
+    pedidos_completados = Pedido.objects.filter(estado='Completado').count()
+    pedidos_cancelados = Pedido.objects.filter(estado='Cancelado').count()
+
+    # Contar movimientos de inventario
+    total_movimientos = MovimientoInventario.objects.count()
+    movimientos_entrada = MovimientoInventario.objects.filter(tipo_movimiento='entrada').count()
+    movimientos_salida = MovimientoInventario.objects.filter(tipo_movimiento='salida').count()
+
+    # Obtener los últimos movimientos de inventario
+    ultimos_movimientos = MovimientoInventario.objects.order_by('-fecha_movimiento')[:5]
+
     context = {
         'total_productos': total_productos,
+        'productos_bajo_stock': productos_bajo_stock,
         'total_proveedores': total_proveedores,
         'total_pedidos': total_pedidos,
-        'total_movimientos':total_movimientos,
+        'pedidos_pendientes': pedidos_pendientes,
+        'pedidos_completados': pedidos_completados,
+        'pedidos_cancelados': pedidos_cancelados,
+        'total_movimientos': total_movimientos,
+        'movimientos_entrada': movimientos_entrada,
+        'movimientos_salida': movimientos_salida,
+        'ultimos_movimientos': ultimos_movimientos,
     }
+    
     return render(request, 'base.html', context) # Para verificar acceso
 
 from django.contrib.auth.decorators import login_required
@@ -495,18 +515,3 @@ def login_view(request):
 def login_redirect_view(request):
     messages.warning(request, "Debes autenticarte para acceder a esa página.")
     return redirect('login')
-
-def lista_pedidos_view(request):
-    if not request.user.is_authenticated:
-        return login_redirect_view(request)
-    return render(request, 'pedidos.html')
-
-def lista_proveedores_view(request):
-    if not request.user.is_authenticated:
-        return login_redirect_view(request)
-    return render(request, 'proveedores.html')
-
-def lista_movimientos_view(request):
-    if not request.user.is_authenticated:
-        return login_redirect_view(request)
-    return render(request, 'movimientos.html')

@@ -496,4 +496,17 @@ def login_redirect_view(request):
     messages.warning(request, "Debes autenticarte para acceder a esa página.")
     return redirect('login')
 
+def lista_pedidos_view(request):
+    if not request.user.is_authenticated:
+        return login_redirect_view(request)
+    return render(request, 'pedidos.html')
 
+def lista_proveedores_view(request):
+    if not request.user.is_authenticated:
+        return login_redirect_view(request)
+    return render(request, 'proveedores.html')
+
+def lista_movimientos_view(request):
+    if not request.user.is_authenticated:
+        return login_redirect_view(request)
+    return render(request, 'movimientos.html')

@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import login_view, logout_view, export_pdf, export_excel, export_pedidos_pdf, export_pedidos_excel, export_proveedores_pdf, export_proveedores_excel
-
+from.views import login_redirect_view
 urlpatterns = [
     path('', login_view, name='login'),  # Página de inicio de sesión como principal
 
@@ -9,6 +9,9 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('base/', views.base, name='base'),
     path('login_redirect/', views.login_redirect_view, name='login_redirect'), 
+    path('pedidos/', login_redirect_view, name='lista_pedidos'),
+    path('proveedores/', login_redirect_view, name='lista_proveedores'),
+    path('movimientos/', login_redirect_view, name='lista_movimientos'),
 
     # Rutas para exportar datos
     # productos
